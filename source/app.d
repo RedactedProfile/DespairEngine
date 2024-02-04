@@ -18,9 +18,39 @@ struct Game
 }
 Game globalGame;
 
-class Sprite 
+class Primitive 
+{
+	float[] verts = [];
+}
+
+class Rectangle : Primitive
 {
 
+}
+
+class Circle : Primitive
+{
+
+}
+
+class Diamond : Primitive
+{
+
+}
+
+class Renderable
+{
+	Primitive primitive;
+	uint vertexArrayObject;
+}
+
+class Sprite : Renderable
+{
+	SDL_Surface *img;
+	
+	this(Primitive _prim) {
+		this.primitive = _prim;
+	}
 }
 
 void initSDL() {
@@ -98,7 +128,9 @@ void main()
 	DerelictSDL2ttf.load();
 	initSDL();
 	initGLContext();
-	auto loaded = DerelictGL3.reload();
+	// auto loaded = DerelictGL3.reload();
+
+	Sprite _spr = new Sprite(new Rectangle());
 
 	for(;;) {
 		if(globalGame.queueGracefulExit) {
