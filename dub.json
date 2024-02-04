@@ -1,0 +1,18 @@
+{
+	"authors": [
+		"djdar"
+	],
+	"copyright": "Copyright © 2024, djdar",
+	"dependencies": {
+		"derelict-gl3": "~>2.0.0-beta",
+		"derelict-sdl2": "~>3.0.0-beta"
+	},
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "dtest",
+	"postBuildCommands": [
+		"xcopy /Y /F .\\assets\\*.dll .\\bin\\"
+	],
+	"targetPath": "bin",
+	"workingDirectory": "bin"
+}
