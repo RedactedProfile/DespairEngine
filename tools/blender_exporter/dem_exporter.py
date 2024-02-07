@@ -1,11 +1,108 @@
-# VitaminD 3D Model Exporter
+# Despair Engine Model Exporter
 import bpy
+from dataclasses import dataclass
+
+# The model format essentially apes off of a weird marriage between obj and md5
+# in that the overall text file format is obj-like in style, purposely stupidly easy to parse 
+# but the essential data flow follows md5's lead. Such as defining joints, weights and animation data
+# There's some unique concessions of my own, like packing as much vertex data into one line as possible in the exact
+# same format as I like to describe my vertex buffers, and only supporting triangles. 
+
+
+@dataclass
+class Vert:
+    i: int      = 0
+    vx: float   = 0.0
+    vy: float   = 0.0
+    vz: float   = 0.0
+    nx: float   = 0.0
+    ny: float   = 0.0
+    nz: float   = 0.0
+    u: float    = 0.0
+    v: float    = 0.0
+    r: float    = 0.0
+    g: float    = 0.0
+    b: float    = 0.0
+    
+    def __str__(self):
+        return "v {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
+            self.i, 
+            self.vx, 
+            self.vy, 
+            self.vz, 
+            self.nx, 
+            self.ny, 
+            self.nz,
+            self.u, 
+            self.v, 
+            self.r,
+            self.g, 
+            self.b
+        )
+    
+@dataclass
+class Joint:
+    name: str
+    parent: int = -1
+    vx: float   = 0.0
+    vy: float   = 0.0
+    vz: float   = 0.0 
+    rx: float   = 0.0
+    ry: float   = 0.0
+    rz: float   = 0.0
+
+    def __str__(self):
+        return "j {} {} {} {} {} {} {} {}\n".format(
+            self.name,
+            self.parent,
+            self.vx,
+            self.vy,
+            self.vz,
+            self.rx,
+            self.ry,
+            self.rz 
+        )
+
+@dataclass 
+class Tri:
+    i: int
+    v1: int
+    v2: int
+    v3: int 
+
+    def __str__(self):
+        return "t {} {} {} {}\n".format(
+            self.i,
+            self.v1,
+            self.v2,
+            self.v3 
+        )
+    
+@dataclass 
+class Weight:
+    i: int 
+    j: int 
+    w: float 
+    x: float 
+    y: float 
+    z: float 
+
+    def __str__(self):
+        return "w {} {} {} {} {} {}\n".format(
+            self.i,
+            self.j,
+            self.w,
+            self.x,
+            self.y,
+            self.z 
+        )
 
 
 
 def write_some_data(context, filepath, use_some_setting):
     print("running writer...")
     f = open(filepath, 'w', encoding='utf-8')
+
     f.write("DEM_10\n")
     
     scene = bpy.context.scene 
@@ -23,6 +120,7 @@ def write_some_data(context, filepath, use_some_setting):
     for obj in scene.objects:
         if obj.type == 'JOINT':
             print("Discovered joint")
+            # j jointName parentIndex vx vy vz rx ry rz 
     
     
     f.write("meshes {}\n".format(numMeshes))
@@ -36,9 +134,13 @@ def write_some_data(context, filepath, use_some_setting):
             
             if bpy.context.mode == 'EDIT_MESH':
                 bpy.ops.object.mode_set(mode='OBJECT')
+                
+            f.write("s lightmapped_generic\n")
             
+            f.write("verts {}\n".format(len(mesh.vertices)))
+            VertArray = []
             for vertex in mesh.vertices:
-                f.write("v {} {} {} {} {} {} {}\n".format(
+                VertArray.append(Vert(
                     vertex.index, 
                     vertex.co.x, 
                     vertex.co.y, 
@@ -48,6 +150,16 @@ def write_some_data(context, filepath, use_some_setting):
                     vertex.normal.z
                 ))
                 
+            for vertex in VertArray:
+                # v idx vx vy vz nx ny nz    (i'd like to include tu tv here as well)
+                f.write(str(vertex))
+                
+                
+            f.write("tris {}\n".format(0))
+            # t idx vidx vidx vidx
+            
+            f.write("weights {}\n".format(0))
+            # w idx jidx weight x y z
             
     
     
