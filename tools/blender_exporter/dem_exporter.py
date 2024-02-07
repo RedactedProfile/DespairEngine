@@ -131,6 +131,7 @@ def write_some_data(context, filepath, use_some_setting):
 
             mesh = obj.data 
             uv_layer = mesh.uv_layers.active.data
+#            color_layer = mesh.vertex_colors.active.data    # this was tripping errors
             
             if bpy.context.mode == 'EDIT_MESH':
                 bpy.ops.object.mode_set(mode='OBJECT')
@@ -149,7 +150,19 @@ def write_some_data(context, filepath, use_some_setting):
                     vertex.normal.y, 
                     vertex.normal.z
                 ))
-                
+            
+
+            for poly in mesh.polygons:
+                print(f"  Face {poly.index}:")
+
+                for li in poly.loop_indices:
+                    loop_idx = mesh.loops[li].vertex_index
+                    loop = mesh.loops[li]
+                    uv = uv_layer[li].uv
+#                    color = color_layer[li].color
+                    print(f"    Loop {li}: Vertex {loop.vertex_index} UV = {uv}")
+#                    print(f"    Loop {li}: Vertex {loop.vertex_index} UV = {uv} Color = (R: {color[0]}, G: {color[1]}, B: {color[2]})")
+
             for vertex in VertArray:
                 # v idx vx vy vz nx ny nz    (i'd like to include tu tv here as well)
                 f.write(str(vertex))
