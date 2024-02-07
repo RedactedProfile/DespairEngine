@@ -1,15 +1,16 @@
 {
 	"authors": [
-		"djdar"
+		"Kyle Harrison"
 	],
-	"copyright": "Copyright © 2024, djdar",
+	"copyright": "Copyright © 2024, Ninja Ghost, Kyle Harrison",
 	"dependencies": {
-		"derelict-gl3": "~>2.0.0-beta",
-		"derelict-sdl2": "~>3.0.0-beta"
+		"derelict-gl3": ">=2.0.0-beta <2.1.0-0",
+		"derelict-sdl2": ">=3.0.0-beta <3.1.0-0",
+		"gl3n": "~>1.4.1"
 	},
-	"description": "A minimal D application.",
+	"description": "A first person visual novel engine",
 	"license": "proprietary",
-	"name": "dtest",
+	"name": "despairengine",
 	"postBuildCommands": [
 		"xcopy /Y /F .\\assets\\*.dll .\\bin\\"
 	],

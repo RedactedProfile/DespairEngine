@@ -1,11 +1,52 @@
+/*
+ * Despair Engine
+ * ----------------------------------------------------------------------------
+ * Filename:    app.d
+ * Description: Right now everthing pretty much goes here. That will change at a later date. 
+ * Created by:  Kyle Harrison (redactedprofile@gmail.com)
+ * Date:        2024
+ * 
+ * ----------------------------------------------------------------------------
+ * Copyright (c) 2024 Ninja Ghost, Kyle Harrison
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ----------------------------------------------------------------------------
+ */
+
 import std.stdio;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 import derelict.sdl2.mixer;
 import derelict.sdl2.ttf;
-
 import derelict.opengl;
 mixin glFreeFuncs!(GLVersion.gl45);
+import gl3n.math;
+import gl3n.linalg;
+// note about gl3n vs glm, something to keep in mind: https://forum.dlang.org/post/qothvgbpudxnrkkcmxde@forum.dlang.org
+//   > iirc, gl3n uses row major and glm uses column major ordering
+//   > just pass GL_TRUE to the transpose argument in glUniformMatrix4fv
+alias vec3r = Vector!(real, 3);
+
+
+enum uint MAX_MESH_VERTS = 2048;
+enum uint MAX_MESH_INDICES = MAX_MESH_VERTS * 2;
+enum uint MAX_MODEL_MESHES = 8;
 
 
 
@@ -21,35 +62,70 @@ Game globalGame;
 class Primitive 
 {
 	float[] verts = [];
+	float[] uvs   = [];
+	int[] indices = [];
+
+	uint vertexBufferObject = 0;
+	uint indexBufferObject = 0;
+
+	vec3 position = vec3(0f,0f,0f);
+	vec3r rotation = vec3r(0f,1f,0f);
+	vec3 scale = vec3(1f,1f,1f);
+	
+	mat4 transform = mat4.identity;
+
+	this() {
+		
+	}
 }
 
 class Rectangle : Primitive
 {
-
+	float[4] verts = [];
 }
 
-class Circle : Primitive
+class Mesh : Primitive
 {
+	float[MAX_MESH_VERTS] verts = []; 
+	float[MAX_MESH_VERTS] uvs = [];
+	float[MAX_MESH_VERTS] indices = [];
+
+	this() {
+		super();
+	}
 
 }
 
-class Diamond : Primitive
-{
-
-}
-
-class Renderable
+// Collected Resources made to be a paintable object to screen
+class GameObject
 {
 	Primitive primitive;
 	uint vertexArrayObject;
+
+	vec3 position = vec3(0f,0f,0f);
+	vec3r rotation = vec3r(0f,1f,0f);
+	vec3 scale = vec3(1f,1f,1f);
+	
+	mat4 transform = mat4.identity;
 }
 
-class Sprite : Renderable
+// Sprite is a flat plane with a texture that always faces the camera
+class Sprite : GameObject
 {
 	SDL_Surface *img;
 	
 	this(Primitive _prim) {
 		this.primitive = _prim;
+	}
+}
+
+// Model is a collection of Meshes that represent a single entity
+class Model : GameObject 
+{
+	Mesh[MAX_MODEL_MESHES] meshes = [];
+
+	this() {
+
 	}
 }
 
