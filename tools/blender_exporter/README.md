@@ -70,3 +70,19 @@ Defines a single frame's singlular joint animated components. There will be an "
 FrameIndex, JointIndex, <Translation (X, Y, Z)>, <Rotation (X, Y, Z)>, <Scale (X, Y, Z)>  
 
 
+# Examples
+
+## Static Model: Blender Cube
+```
+coming soon
+```
+
+## Static Model: Multiple Boxes
+```
+coming soon
+```
+
+## Animated Model: Waving Rectangle 
+```
+coming soon
+```
