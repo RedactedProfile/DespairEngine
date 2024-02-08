@@ -28,7 +28,7 @@ Defines the text based name of the intended material to use for this model
 `verts {int}`  
 Denotes the start of Model::Mesh::Vertex Mode, and provides the number of verticies in this mesh   
 `v {int:VertIndex} {float:PointX} {float:PointY} {float:PointZ} {float:NormalX} {float:NormalY} {float:NormalZ} {float:TexU} {float:TexV} {float:ColorR} {float:ColorG} {float:ColorB}`  
-Defines a single Vertex with Position Coordinates, Normals, Texture Coordinates, and Vertex Color
+Defines a single Vertex with Position Coordinates, Normals, Texture Coordinates, and Vertex Color  
 `tris {int}`  
 Denotes the start of Model::Mesh::Triangle Mode, and provides the number of triangles in this mesh   
 `t {int:PolyIndex} {int:VertIndex} {int:VertIndex} {int:VertIndex}`    
@@ -72,7 +72,32 @@ Defines a single frame's singlular joint animated components. There will be an "
 
 ## Static Model: Blender Cube
 ```
-coming soon
+DEM_10
+meshes 1
+mesh Cube
+mat cube
+verts 8
+v 0 -1.0 -1.0 -1.0 -0.5773503184318542 -0.5773503184318542 -0.5773503184318542 0.125 0.75 1.0 1.0 1.0
+v 1 -1.0 -1.0 1.0 -0.5773503184318542 -0.5773503184318542 0.5773503184318542 0.875 0.75 1.0 1.0 1.0
+v 2 -1.0 1.0 -1.0 -0.5773503184318542 0.5773503184318542 -0.5773503184318542 0.125 0.5 1.0 1.0 1.0
+v 3 -1.0 1.0 1.0 -0.5773503184318542 0.5773503184318542 0.5773503184318542 0.875 0.5 1.0 1.0 1.0
+v 4 1.0 -1.0 -1.0 0.5773503184318542 -0.5773503184318542 -0.5773503184318542 0.375 0.75 1.0 1.0 1.0
+v 5 1.0 -1.0 1.0 0.5773503184318542 -0.5773503184318542 0.5773503184318542 0.625 0.75 1.0 1.0 1.0
+v 6 1.0 1.0 -1.0 0.5773503184318542 0.5773503184318542 -0.5773503184318542 0.375 0.5 1.0 1.0 1.0
+v 7 1.0 1.0 1.0 0.5773503184318542 0.5773503184318542 0.5773503184318542 0.625 0.5 1.0 1.0 1.0
+tris 6
+t 1 2 0
+t 3 6 2
+t 7 4 6
+t 5 0 4
+t 6 0 2
+t 3 5 7
+t 1 3 2
+t 3 7 6
+t 7 5 4
+t 5 1 0
+t 6 4 0
+t 3 1 5
 ```
 
 ## Static Model: Multiple Boxes
