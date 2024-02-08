@@ -13,58 +13,6 @@ logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-10s) %(message)s'
 
 MAX_FLOAT_PRECISION = 16
 
-
-##### MDL FORMAT
-# model {str}
-#   Denotes the start of the model file, and provides the machine name of the model by which it should be referenced in code and editors
-# joints {int}
-#   The number of joints for this model 
-# meshes {int}
-#   The number of meshes for this model
-# sequences {int}
-#   Provides the numbers of animation sequences for this model
-# mesh {str}
-#   Denotes the start of Model::Mesh Mode and gives the mesh a name 
-# s {str}
-#   Defines the text based name of the intended shader to use for this model 
-# verts {int}
-#   Denotes the start of Model::Mesh::Vertex Mode, and provides the number of verticies in this mesh 
-# v {int} {float} {float} {float} {float} {float} {float} {float} {float} {float} {float} {float}
-#   Defines a single Vertex:
-#       Index, <Point (X, Y, Z)>, <Normal (X, Y, Z)>, <TexCoord (U, V)>, <Color (R, G, B)>
-# tris {int}
-#   Denotes the start of Model::Mesh::Triangle Mode, and provides the number of triangles in this mesh 
-# t {int} {int} {int} {int}
-#   Defines a single triangle, the only primitive DEM supports:
-#       PolyIndex, VertIndex 1, VertIndex 2, VertIndex 3
-# weights {int}
-#   Denotes the start of Model::Mesh::Skin Mode, and provides the number of weights defined
-# w {int} {int} {float} {float} {float} {float}
-#   Defines an influence weight 
-#       WeightIndex, JointIndex, InfluenceFactor, <Position (X, Y, Z)>
-##### ANIM FORMAT
-# sequence {str}
-#   Denotes the start of Model::Anim::Sequence Mode, and provides the machine name by which it should be referenced in code and editors
-# rate {int}
-#   The framerate 
-# components {int}
-#   The number of animated components (default: 9 (translation, rotation, scale))
-# joints {int}
-#   Denotes the start of Model::Anim::Sequence::Joints Mode, and provides the number of joints to be animated in this sequence
-# j {str} {int} {int} {int}
-#   Defines an animated joint
-#      JointName, ParentJointIndex, Flags, StartIndex
-#         Note: StartIndex will default to 9 
-# bounds {int}
-#   Denotes the start of Model::Anim::Sequence::Bounds Mode, and provides the number of bounds in this sequence
-# b {float} {float} {float} {float} {float} {float}
-#   Defines min and max points defining the bounding box for each frame, used for collision detection and view culling
-# frames {int}
-#   Denotes the start of Model::Anim::Sequence::Frame Mode, and provides the number of frames this sequence has 
-# f {int} {int} {float} {float} {float} {float} {float} {float} {float} {float} {float}
-#   Defines a single frame's singlular joint animated components. There will be an "f" line for every joint in the frame
-#      FrameIndex, JointIndex, <Translation (X, Y, Z)>, <Rotation (X, Y, Z)>, <Scale (X, Y, Z)>
-
 @dataclass
 class Vert:
     i: int      = 0
@@ -238,7 +186,7 @@ def write_some_data(context, filepath, use_some_setting):
             if bpy.context.mode == 'EDIT_MESH':
                 bpy.ops.object.mode_set(mode='OBJECT')
                 
-            f.write("s lightmapped_generic\n")
+            f.write("mat lightmapped_generic\n")
             
             ### Gather Vertices
             f.write("verts {}\n".format(len(mesh.vertices)))
