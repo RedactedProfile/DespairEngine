@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-10s) %(message)s'
 # There's some unique concessions of my own, like packing as much vertex data into one line as possible in the exact
 # same format as I like to describe my vertex buffers, and only supporting triangles. 
 
+MAX_FLOAT_PRECISION = 16
 
 @dataclass
 class Vert:
@@ -30,17 +31,17 @@ class Vert:
     def __str__(self):
         return "v {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
             self.i, 
-            self.vx, 
-            self.vy, 
-            self.vz, 
-            self.nx, 
-            self.ny, 
-            self.nz,
-            self.u, 
-            self.v, 
-            self.r,
-            self.g, 
-            self.b
+            round(self.vx, MAX_FLOAT_PRECISION),
+            round(self.vy, MAX_FLOAT_PRECISION),
+            round(self.vz, MAX_FLOAT_PRECISION),
+            round(self.nx, MAX_FLOAT_PRECISION),
+            round(self.ny, MAX_FLOAT_PRECISION),
+            round(self.nz, MAX_FLOAT_PRECISION),
+            round(self.u, MAX_FLOAT_PRECISION),
+            round(self.v, MAX_FLOAT_PRECISION),
+            round(self.r, MAX_FLOAT_PRECISION),
+            round(self.g, MAX_FLOAT_PRECISION),
+            round(self.b, MAX_FLOAT_PRECISION)
         )
     
 @dataclass
@@ -58,12 +59,12 @@ class Joint:
         return "j {} {} {} {} {} {} {} {}\n".format(
             self.name,
             self.parent,
-            self.vx,
-            self.vy,
-            self.vz,
-            self.rx,
-            self.ry,
-            self.rz 
+            round(self.vx, MAX_FLOAT_PRECISION),
+            round(self.vy, MAX_FLOAT_PRECISION),
+            round(self.vz, MAX_FLOAT_PRECISION),
+            round(self.rx, MAX_FLOAT_PRECISION),
+            round(self.ry, MAX_FLOAT_PRECISION),
+            round(self.rz, MAX_FLOAT_PRECISION) 
         )
 
 @dataclass 
@@ -94,10 +95,10 @@ class Weight:
         return "w {} {} {} {} {} {}\n".format(
             self.i,
             self.j,
-            self.w,
-            self.x,
-            self.y,
-            self.z 
+            round(self.w, MAX_FLOAT_PRECISION),
+            round(self.x, MAX_FLOAT_PRECISION),
+            round(self.y, MAX_FLOAT_PRECISION),
+            round(self.z, MAX_FLOAT_PRECISION) 
         )
 
 
