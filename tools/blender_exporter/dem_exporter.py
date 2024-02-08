@@ -1,6 +1,9 @@
 # Despair Engine Model Exporter
 import bpy
+import logging
 from dataclasses import dataclass
+
+logging.basicConfig(level=logging.DEBUG,format='(%(threadName)-10s) %(message)s',)
 
 # The model format essentially apes off of a weird marriage between obj and md5
 # in that the overall text file format is obj-like in style, purposely stupidly easy to parse 
@@ -131,7 +134,13 @@ def write_some_data(context, filepath, use_some_setting):
 
             mesh = obj.data 
             uv_layer = mesh.uv_layers.active.data
-#            color_layer = mesh.vertex_colors.active.data    # this was tripping errors
+            
+            if not mesh.vertex_colors:
+                mesh.vertex_colors.new()
+                #logging.debug("Mesh had no vertex colors, adding them")
+                print(f"Mesh had no vertex colors, adding them")
+            
+            color_layer = mesh.vertex_colors.active.data    # this was tripping errors
             
             if bpy.context.mode == 'EDIT_MESH':
                 bpy.ops.object.mode_set(mode='OBJECT')
@@ -156,12 +165,17 @@ def write_some_data(context, filepath, use_some_setting):
                 print(f"  Face {poly.index}:")
 
                 for li in poly.loop_indices:
-                    loop_idx = mesh.loops[li].vertex_index
                     loop = mesh.loops[li]
+                    loop_idx = loop.vertex_index
                     uv = uv_layer[li].uv
-#                    color = color_layer[li].color
-                    print(f"    Loop {li}: Vertex {loop.vertex_index} UV = {uv}")
-#                    print(f"    Loop {li}: Vertex {loop.vertex_index} UV = {uv} Color = (R: {color[0]}, G: {color[1]}, B: {color[2]})")
+                    color = color_layer[li].color
+#                    print(f"    Loop {li}: Vertex {loop_idx} UV = {uv}")
+                    VertArray[loop_idx].u = uv.x
+                    VertArray[loop_idx].v = uv.y
+                    VertArray[loop_idx].r = color[0]
+                    VertArray[loop_idx].g = color[1]
+                    VertArray[loop_idx].b = color[2]
+                    print(f"    Loop {li}: Vertex {loop_idx} UV = {uv} Color = (R: {color[0]}, G: {color[1]}, B: {color[2]})")
 
             for vertex in VertArray:
                 # v idx vx vy vz nx ny nz    (i'd like to include tu tv here as well)
