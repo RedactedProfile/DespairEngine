@@ -69,9 +69,9 @@ class Joint:
 @dataclass 
 class Tri:
     i: int
-    v1: int
-    v2: int
-    v3: int 
+    v1: int = 0
+    v2: int = 0
+    v3: int = 0
 
     def __str__(self):
         return "t {} {} {} {}\n".format(
@@ -105,6 +105,14 @@ class Weight:
 def write_some_data(context, filepath, use_some_setting):
     print("running writer...")
     f = open(filepath, 'w', encoding='utf-8')
+    
+    
+    # Apply a Triangulate Modifier to all mesh objects
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            mod = obj.modifiers.new(name="Triangulate", type='TRIANGULATE')
+            # Configure the modifier if needed
+    
 
     f.write("DEM_10\n")
     
@@ -147,6 +155,7 @@ def write_some_data(context, filepath, use_some_setting):
                 
             f.write("s lightmapped_generic\n")
             
+            ### Gather Vertices
             f.write("verts {}\n".format(len(mesh.vertices)))
             VertArray = []
             for vertex in mesh.vertices:
@@ -160,10 +169,9 @@ def write_some_data(context, filepath, use_some_setting):
                     vertex.normal.z
                 ))
             
-
+            
             for poly in mesh.polygons:
-                print(f"  Face {poly.index}:")
-
+                #print(f"  Face {poly.index}:")
                 for li in poly.loop_indices:
                     loop = mesh.loops[li]
                     loop_idx = loop.vertex_index
@@ -175,23 +183,55 @@ def write_some_data(context, filepath, use_some_setting):
                     VertArray[loop_idx].r = color[0]
                     VertArray[loop_idx].g = color[1]
                     VertArray[loop_idx].b = color[2]
-                    print(f"    Loop {li}: Vertex {loop_idx} UV = {uv} Color = (R: {color[0]}, G: {color[1]}, B: {color[2]})")
+                    #print(f"    Loop {li}: Vertex {loop_idx} UV = {uv} Color = (R: {color[0]}, G: {color[1]}, B: {color[2]})")
 
             for vertex in VertArray:
-                # v idx vx vy vz nx ny nz    (i'd like to include tu tv here as well)
+                # v idx vx vy vz nx ny nz tu tv cr cg cb
                 f.write(str(vertex))
                 
                 
-            f.write("tris {}\n".format(0))
+            ### Gather Faces
+            FaceArray = []
+            for poly in mesh.polygons:
+                print(f"  Face {poly.index}:")
+                
+                t = Tri(
+                    poly.index
+                )
+                for li in poly.loop_indices:
+                    if li <= 2:
+                        loop = mesh.loops[li]
+                        loop_idx = loop.vertex_index
+#                        setattr(t, f'v{li+1}', loop_idx)
+                        if li == 0:
+                            t.v1 = loop_idx
+                        elif li == 1:
+                            t.v2 = loop_idx
+                        elif li == 2:
+                            t.v3 = loop_idx
+                FaceArray.append(t)
+                    
+            f.write("tris {}\n".format(len(FaceArray)))
             # t idx vidx vidx vidx
+            for face in FaceArray:
+                f.write(str(face))
+                    
             
+            ### Gather Weights
+            WeightArray = []
             f.write("weights {}\n".format(0))
             # w idx jidx weight x y z
-            
     
     
 #    f.write("Hello World %s" % use_some_setting)
     f.close()
+    
+    # Remove the Triangulate Modifier after export
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            for mod in obj.modifiers:
+                if mod.type == 'TRIANGULATE':
+                    obj.modifiers.remove(mod)
 
     return {'FINISHED'}
 
