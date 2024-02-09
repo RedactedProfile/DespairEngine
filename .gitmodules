@@ -1,0 +1,3 @@
+[submodule "tools/DEM"]
+	path = tools/DEM
+	url = git@github.com:RedactedProfile/DEM.git
